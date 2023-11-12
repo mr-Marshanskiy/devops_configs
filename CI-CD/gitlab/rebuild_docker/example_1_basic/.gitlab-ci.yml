@@ -1,0 +1,16 @@
+stages:
+  - deploy
+
+variables:
+  SERVER_HOST: $SERVER_HOST
+  SERVER_USERNAME: $SERVER_USERNAME
+  SERVER_PASSWORD: $SERVER_PASSWORD
+  SERVER_PATH: $SERVER_PATH
+
+deploy:
+  stage: deploy
+  script:
+    - apk add --no-cache openssh-client sshpass
+    - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USERNAME@$SERVER_HOST "cd $SERVER_PATH && git pull && docker-compose up -d --build"
+  only:
+    - master

@@ -1,0 +1,37 @@
+version: '3.11'
+
+services:
+  web:
+    build: ..
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+    container_name: web
+    volumes:
+      - ./:/usr/src/app/
+      - $STATIC_FILES:/usr/src/app/static/
+      - /var/www/back/media/:/usr/src/app/media/
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:14-alpine
+    container_name: db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DATABASE}
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - 6379:6379
+
+volumes:
+  postgres_data:
