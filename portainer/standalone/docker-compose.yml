@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+  portainer:
+    env_file:
+      - .env
+    image: portainer/portainer-ce:latest
+    container_name: $CONTAINER_NAME
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PATH_TO_DATA:/data
+    ports:
+      - $WEB_PORT:8000
+      - 9443:9443
+    restart: always
